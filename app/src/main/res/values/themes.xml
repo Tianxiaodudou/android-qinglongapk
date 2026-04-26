@@ -1,20 +1,28 @@
 <resources>
-    <!-- Base application theme. -->
+    <!-- 基础主题 - 蓝色系卡片式 -->
     <style name="Theme.App" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
-        <!-- 导航栏颜色 -->
+        <!-- 主色 -->
         <item name="colorPrimary">@color/theme_blue</item>
         <item name="colorPrimaryVariant">@color/theme_blue</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorSecondary">@color/teal_200</item>
         <item name="colorSecondaryVariant">@color/theme_blue</item>
         <item name="colorOnSecondary">@color/black</item>
+        <!-- 状态栏 -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <item name="colorControlActivated">@color/theme_blue_shadow</item>
         <item name="android:windowLightStatusBar">false</item>
-        <!-- 背景颜色 -->
-        <item name="android:windowBackground">@color/theme_white_shadow</item>
+        <!-- 背景：淡蓝灰，让白色卡片浮现出来 -->
+        <item name="android:windowBackground">@color/background</item>
+        <item name="colorSurface">@color/card_background</item>
+        <item name="colorOnSurface">@color/on_surface</item>
+        <!-- Material Design 3 圆角（这个Bridge主题可能不完全支持，但在卡片布局里用background能实现） -->
+        <item name="shapeCornerSmall">8dp</item>
+        <item name="shapeCornerMedium">12dp</item>
+        <item name="shapeCornerLarge">16dp</item>
     </style>
 
+    <!-- 白色状态栏变体 - 用于需要浅色状态栏的页面 -->
     <style name="Theme.App.WhiteShadow" parent="Theme.App">
         <item name="android:windowLightStatusBar">true</item>
         <item name="colorPrimary">@color/theme_white_shadow</item>
@@ -22,6 +30,7 @@
         <item name="android:windowBackground">@color/theme_white_shadow</item>
     </style>
 
+    <!-- 纯白状态栏变体 -->
     <style name="Theme.App.White" parent="Theme.App">
         <item name="android:windowLightStatusBar">true</item>
         <item name="colorPrimary">@color/white</item>
