@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:elevation="@dimen/common_item_elevation"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginTop="8dp"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/app_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text_color_49"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/app_client_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textColor="@color/text_color_49"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/app_scopes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:textColor="@color/text_color_49"
+        android:textSize="13sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:gravity="end">
+
+        <TextView
+            android:id="@+id/app_reset_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/style_button_white"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="4dp"
+            android:text="重置密钥"
+            android:textColor="@color/text_color_99"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/app_delete_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/style_button_white"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="4dp"
+            android:text="删除"
+            android:textColor="@color/text_color_red"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+</LinearLayout>

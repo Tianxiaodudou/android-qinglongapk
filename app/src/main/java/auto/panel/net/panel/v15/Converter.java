@@ -190,6 +190,12 @@ public class Converter {
         try {
             config.setLogRemoveFrequency(object.getLogRemoveFrequency());
             config.setCronConcurrency(object.getCronConcurrency());
+            config.setTimezone(object.getTimezone());
+            config.setNodeMirror(object.getNodeMirror());
+            config.setPythonMirror(object.getPythonMirror());
+            config.setLinuxMirror(object.getLinuxMirror());
+            config.setDependenceProxy(object.getDependenceProxy());
+            config.setGlobalSshKey(object.getGlobalSshKey());
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -28,6 +28,12 @@ public class SystemConfigRes extends BaseRes {
     public static class SystemConfigObject {
         private int logRemoveFrequency;
         private int cronConcurrency;
+        private String timezone;
+        private String nodeMirror;
+        private String pythonMirror;
+        private String linuxMirror;
+        private String dependenceProxy;
+        private String globalSshKey;
 
         public int getLogRemoveFrequency() {
             return logRemoveFrequency;
@@ -35,6 +41,30 @@ public class SystemConfigRes extends BaseRes {
 
         public int getCronConcurrency() {
             return cronConcurrency;
+        }
+
+        public String getTimezone() {
+            return timezone;
+        }
+
+        public String getNodeMirror() {
+            return nodeMirror;
+        }
+
+        public String getPythonMirror() {
+            return pythonMirror;
+        }
+
+        public String getLinuxMirror() {
+            return linuxMirror;
+        }
+
+        public String getDependenceProxy() {
+            return dependenceProxy;
+        }
+
+        public String getGlobalSshKey() {
+            return globalSshKey;
         }
     }
 }

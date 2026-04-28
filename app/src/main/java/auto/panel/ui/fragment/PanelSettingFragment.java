@@ -58,9 +58,12 @@ public class PanelSettingFragment extends BaseFragment {
                     tab.setText("常规设置");
                     break;
                 case 1:
-                    tab.setText("登录日志");
+                    tab.setText("通知设置");
                     break;
                 case 2:
+                    tab.setText("登录日志");
+                    break;
+                case 3:
                     tab.setText("应用设置");
                     break;
             }
