@@ -78,9 +78,8 @@ jobs:
         git config user.name "github-actions"
         git config user.email "actions@github.com"
         git add version.json app/build.gradle
-        git commit -m "chore: 更新版本号到 2.1.$GITHUB_RUN_NUMBER"
-        git pull --rebase origin ${{ github.ref_name }}
-        git push
+        git commit -m "chore: 更新版本号到 2.1.$GITHUB_RUN_NUMBER" || true
+        git push --force-with-lease
 
     - name: 创建 GitHub Release
       uses: softprops/action-gh-release@v1
