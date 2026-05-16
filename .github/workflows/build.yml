@@ -22,6 +22,30 @@ jobs:
     - name: 设置 Android SDK
       uses: android-actions/setup-android@v3
     
+    - name: 准备签名密钥
+      run: |
+        # 如果配置了 GitHub Secrets，从 Secret 解码
+        if [ -n "${{ secrets.KEYSTORE_BASE64 }}" ]; then
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > release.jks
+          echo "KEYSTORE_FILE=release.jks" >> $GITHUB_ENV
+        else
+          # 没有配置 Secret，临时生成一个（每次构建相同参数）
+          keytool -genkey -v \
+            -keystore release.jks \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -alias qinglong \
+            -storepass qinglong2026 \
+            -keypass qinglong2026 \
+            -dname "CN=QingLong, OU=Dev, O=QingLong, L=Beijing, ST=Beijing, C=CN" \
+            -noprompt
+          echo "KEYSTORE_FILE=release.jks" >> $GITHUB_ENV
+          # 导出 keystore 的 base64 供后续保存
+          base64 release.jks > keystore_base64.txt
+        fi
+        echo "KEYSTORE_PASSWORD=qinglong2026" >> $GITHUB_ENV
+        echo "KEY_ALIAS=qinglong" >> $GITHUB_ENV
+        echo "KEY_PASSWORD=qinglong2026" >> $GITHUB_ENV
+    
     - name: 赋予 Gradle 执行权限
       run: chmod +x gradlew
     
@@ -33,3 +57,10 @@ jobs:
       with:
         name: app-release
         path: app/build/outputs/apk/release/*.apk
+
+    - name: 上传签名密钥（仅首次生成时）
+      if: ${{ !secrets.KEYSTORE_BASE64 }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: keystore-backup
+        path: release.jks
