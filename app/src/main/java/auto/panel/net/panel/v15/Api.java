@@ -38,6 +38,9 @@ public interface Api {
     @HTTP(method = "DELETE", path = "api/dependencies/force", hasBody = true)
     Call<BaseRes> deleteDependencies(@Body RequestBody body);
 
+    @GET("api/system/config")
+    Call<SystemConfigRes> getSystemConfig();
+
     @PUT("api/system/config")
     Call<BaseRes> updateSystemConfig(@Body RequestBody body);
 

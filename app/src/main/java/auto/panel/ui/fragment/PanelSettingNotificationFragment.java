@@ -16,14 +16,16 @@ import android.widget.TextView;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import auto.panel.R;
 import auto.panel.bean.panel.PanelNotificationMode;
 import auto.panel.net.RetrofitFactory;
 import auto.panel.net.panel.BaseRes;
-import auto.panel.net.panel.NetHandler;
 import auto.panel.net.panel.v15.Api;
+import auto.panel.net.panel.v15.SystemConfigRes;
 import auto.panel.utils.TextUnit;
 import auto.panel.utils.ToastUnit;
 import okhttp3.MediaType;
@@ -43,7 +45,10 @@ public class PanelSettingNotificationFragment extends BaseFragment {
     private Button uiSaveBtn;
 
     private PanelNotificationMode selectedMode;
+    private PanelNotificationMode[] modes;
     private final List<EditText> fieldEditTexts = new ArrayList<>();
+    // 从面板加载的原始值，用于预填（在 showConfigFields 之后应用）
+    private Map<String, String> pendingValues;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -61,8 +66,7 @@ public class PanelSettingNotificationFragment extends BaseFragment {
 
     @Override
     protected void init() {
-        // Set up spinner with notification modes
-        PanelNotificationMode[] modes = PanelNotificationMode.values();
+        modes = PanelNotificationMode.values();
         String[] displayNames = new String[modes.length];
         for (int i = 0; i < modes.length; i++) {
             displayNames[i] = modes[i].getDisplayName();
@@ -87,6 +91,94 @@ public class PanelSettingNotificationFragment extends BaseFragment {
 
         uiTestBtn.setOnClickListener(v -> testNotification());
         uiSaveBtn.setOnClickListener(v -> saveNotification());
+
+        // 启动时加载面板现有配置
+        loadSystemConfig();
+    }
+
+    /**
+     * 从面板 API 加载当前系统配置
+     */
+    private void loadSystemConfig() {
+        Call<SystemConfigRes> call = RetrofitFactory.buildWithAuthorization(Api.class).getSystemConfig();
+        call.enqueue(new Callback<SystemConfigRes>() {
+            @Override
+            public void onResponse(Call<SystemConfigRes> call, Response<SystemConfigRes> response) {
+                if (response.code() != 200 || response.body() == null || response.body().getCode() != 200) {
+                    return;
+                }
+                SystemConfigRes res = response.body();
+                if (res.getData() == null || res.getData().getInfo() == null) {
+                    return;
+                }
+                SystemConfigRes.SystemConfigObject info = res.getData().getInfo();
+                applyConfig(info);
+                init = true;
+            }
+
+            @Override
+            public void onFailure(Call<SystemConfigRes> call, Throwable t) {
+            }
+        });
+    }
+
+    /**
+     * 根据系统配置判断当前通知模式并预填字段
+     */
+    private void applyConfig(SystemConfigRes.SystemConfigObject info) {
+        PanelNotificationMode detectedMode = null;
+        Map<String, String> values = new HashMap<>();
+
+        // 按枚举顺序检测：找第一个必填字段有值的通知模式
+        for (PanelNotificationMode mode : modes) {
+            PanelNotificationMode.PanelNotificationField[] fields = mode.getFields();
+            for (PanelNotificationMode.PanelNotificationField field : fields) {
+                if (field.isRequired()) {
+                    String value = getConfigField(info, field.getKey());
+                    if (!TextUnit.isEmpty(value)) {
+                        detectedMode = mode;
+                    }
+                    break;
+                }
+            }
+            if (detectedMode != null) {
+                // 读取该模式所有字段的值
+                for (PanelNotificationMode.PanelNotificationField field : fields) {
+                    String value = getConfigField(info, field.getKey());
+                    if (!TextUnit.isEmpty(value)) {
+                        values.put(field.getKey(), value);
+                    }
+                }
+                break;
+            }
+        }
+
+        if (detectedMode != null) {
+            // 先保存待填充的值，然后选中对应的 spinner 项
+            // spinner 选中会触发 onItemSelected -> showConfigFields
+            pendingValues = values;
+            for (int i = 0; i < modes.length; i++) {
+                if (modes[i] == detectedMode) {
+                    uiSpinner.setSelection(i);
+                    break;
+                }
+            }
+            pendingValues = null;
+        }
+    }
+
+    /**
+     * 通过反射获取 SystemConfigObject 中的字段值
+     */
+    private String getConfigField(SystemConfigRes.SystemConfigObject info, String key) {
+        try {
+            String methodName = "get" + key.substring(0, 1).toUpperCase() + key.substring(1);
+            java.lang.reflect.Method getter = info.getClass().getMethod(methodName);
+            Object result = getter.invoke(info);
+            return result != null ? result.toString() : "";
+        } catch (Exception e) {
+            return "";
+        }
     }
 
     private void showConfigFields(PanelNotificationMode mode) {
@@ -110,10 +202,14 @@ public class PanelSettingNotificationFragment extends BaseFragment {
             label.setText(labelText);
             input.setHint(field.getDefaultValue());
 
-            // Set input type based on field key
             if (field.getKey().contains("Pass") || field.getKey().contains("Secret")
                     || field.getKey().contains("Token") || field.getKey().contains("Key")) {
                 input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            }
+
+            // 如果是从面板加载的值，预填
+            if (pendingValues != null && pendingValues.containsKey(field.getKey())) {
+                input.setText(pendingValues.get(field.getKey()));
             }
 
             fieldEditTexts.add(input);

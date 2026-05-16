@@ -75,13 +75,16 @@ public class PanelSettingOpenAppsFragment extends BaseFragment {
                 resetAppSecret(app);
             }
         });
+
+        // 初始化时加载数据
+        uiRefresh.autoRefreshAnimationOnly();
+        loadApps();
     }
 
     @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        if (!hidden && !init) {
-            uiRefresh.autoRefreshAnimationOnly();
+    public void onResume() {
+        super.onResume();
+        if (init) {
             loadApps();
         }
     }
