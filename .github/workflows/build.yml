@@ -3,63 +3,46 @@ name: Build APK
 on:
   push:
     branches: [ main, master ]
-  workflow_dispatch:  # 允许手动触发
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: 检出代码
       uses: actions/checkout@v4
-    
+
     - name: 设置 JDK 17
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
-    
+
     - name: 设置 Android SDK
       uses: android-actions/setup-android@v3
-    
-    - name: 准备签名密钥
+
+    - name: 自动递增版本号
       run: |
-        # 如果配置了 GitHub Secrets，从 Secret 解码
-        if [ -n "${{ secrets.KEYSTORE_BASE64 }}" ]; then
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > release.jks
-          echo "KEYSTORE_FILE=release.jks" >> $GITHUB_ENV
-        else
-          # 没有配置 Secret，临时生成一个（每次构建相同参数）
-          keytool -genkey -v \
-            -keystore release.jks \
-            -keyalg RSA -keysize 2048 -validity 10000 \
-            -alias qinglong \
-            -storepass qinglong2026 \
-            -keypass qinglong2026 \
-            -dname "CN=QingLong, OU=Dev, O=QingLong, L=Beijing, ST=Beijing, C=CN" \
-            -noprompt
-          echo "KEYSTORE_FILE=release.jks" >> $GITHUB_ENV
-          # 导出 keystore 的 base64 供后续保存
-          base64 release.jks > keystore_base64.txt
-        fi
+        sed -i "s/versionCode .*/versionCode $GITHUB_RUN_NUMBER/" app/build.gradle
+        sed -i "s/versionName \".*/versionName \"2.1.$GITHUB_RUN_NUMBER\"/" app/build.gradle
+
+    - name: 解码签名密钥
+      run: |
+        echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > release.jks
+        echo "KEYSTORE_FILE=release.jks" >> $GITHUB_ENV
         echo "KEYSTORE_PASSWORD=qinglong2026" >> $GITHUB_ENV
         echo "KEY_ALIAS=qinglong" >> $GITHUB_ENV
         echo "KEY_PASSWORD=qinglong2026" >> $GITHUB_ENV
-    
+
     - name: 赋予 Gradle 执行权限
       run: chmod +x gradlew
-    
+
     - name: 构建 Release APK
       run: ./gradlew assembleRelease
-    
+
     - name: 上传 APK 产物
       uses: actions/upload-artifact@v4
       with:
-        name: app-release
+        name: app-release-v${{ github.run_number }}
         path: app/build/outputs/apk/release/*.apk
-
-    - name: 上传签名密钥（仅首次生成时）
-      uses: actions/upload-artifact@v4
-      with:
-        name: keystore-backup
-        path: release.jks
