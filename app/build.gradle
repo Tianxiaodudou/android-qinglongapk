@@ -10,8 +10,8 @@ android {
         applicationId "auto.panel"
         minSdk 26
         targetSdk 32
-        versionCode 15
-        versionName "2.1.0"
+        versionCode 22
+        versionName "2.1.22"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
