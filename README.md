@@ -1,76 +1,91 @@
-# 定时精灵
+# 青龙面板 Android 客户端
 
-## 软件介绍
+基于青龙面板 v2.20.2 API 开发的安卓管理客户端，支持面板全部原生功能。
 
-本软件基于**青龙面板**接口开发，支持面板大部分原生功能，同时提供拓展模块，帮助用户快捷管理。
+## 分支说明
 
-## 使用环境
+- `master` —— 原作者原始代码（不可修改）
+- `青龙APP_claw版` —— 当前维护分支，持续迭代中
 
-- 安卓版本：8.0+
-- 面板版本：参考[APP版本](https://gitee.com/wsfsp4/public-static-file/blob/master/qinglong/version.md)，选择合适软件版本
+## 运行环境
 
-## 代码说明
+- 安卓 8.0+
+- 青龙面板 v2.15+
 
-本仓库代码截止*2.0.5*版本，后续版本代码将不再同步更新至仓库，只进行apk包发布。
+## 功能列表
 
-## 功能介绍
+### 已实现
 
-### 用户登录
+| 模块 | 功能 |
+|------|------|
+| 定时任务 | 增删改查、批量操作、运行/停止、日志查看、脚本跳转、标签分类、任务备份导入 |
+| 环境变量 | 增删改查、批量操作、快捷导入、备份导入 |
+| 配置文件 | 查看编辑 config.sh |
+| 脚本管理 | 树形浏览、查看、编辑、删除、更新、下载 |
+| 依赖管理 | 新建、删除、批量操作、日志查看 |
+| 任务日志 | 按订阅/脚本树形浏览运行日志 |
+| 系统设置 | 改密码、通知配置、登录日志、应用管理、日志导出 |
 
-支持通过域名和IP地址形式登录，默认为HTTP协议，支持以下地址格式：
+### 开发中
 
-- 127.0.0.1:5700
-- www.example.com
-- www.example.com:5700
-- https://www.example.com
-- https://www.example.com:5700
+| 模块 | 进度 |
+|------|------|
+| 订阅管理 | 规划中 |
+| 对比工具 | 规划中 |
+| 系统日志 | 规划中 |
+| 依赖设置 | 规划中 |
+| 关于页面 | 规划中 |
+| 多文件配置 | 规划中 |
 
-### 基础功能
+## 代码结构
 
-提供定时任务、环境变量、配置文件、脚本管理、依赖管理、任务日志和系统设置功能。
+```
+android-qinglongapk/
+├── app/                          # 主应用模块
+│   └── src/main/java/auto/panel/
+│       ├── bean/                 # 数据模型
+│       │   ├── app/              # 应用层模型（版本、配置）
+│       │   └── panel/            # 面板业务模型（任务、环境变量等）
+│       ├── database/             # 数据持久化
+│       │   ├── db/               # SQLite 数据库
+│       │   └── sp/               # SharedPreferences
+│       ├── net/                  # 网络层
+│       │   ├── app/              # 应用 API（版本检查、配置拉取）
+│       │   ├── panel/            # 面板 API（Retrofit 接口）
+│       │   │   └── v15/          # v2.15+ 新版 API
+│       │   └── web/              # WebView JS 桥接
+│       ├── ui/                   # 界面层
+│       │   ├── activity/         # Activity
+│       │   ├── adapter/          # RecyclerView 适配器
+│       │   └── fragment/         # Fragment
+│       └── utils/                # 工具类
+├── base/                         # 基础 UI 组件
+│   └── src/main/java/auto/base/
+│       ├── ui/popup/             # 弹窗组件
+│       ├── ui/view/              # 自定义视图
+│       └── util/                 # 基础工具
+└── gradle/                       # 构建配置
+```
 
-- 定时任务：支持增改删查、批量操作、查看日志、查看脚本、任务去重、本地备份和本地导入；
-- 环境变量：支持增改删查、批量操作、变量去重、快捷导入、本地备份和本地导入；
-- 配置文件：支持查看和修改配置；
-- 依赖管理：支持新建、删除、批量操作和查看日志；
-- 脚本管理：支持查看、编辑、删除、更新和下载脚本；
-- 任务日志：支持查看日志文件列表；
-- 系统设置：支持常规设置和登录日志查看；
+## 构建方式
 
-#### 操作提示
+推送代码到 `青龙APP_claw版` 分支，GitHub Actions 自动编译签名 APK。
 
-| 模块     | 单击标题 | 长按标题 | 长按内容 |
-| -------- | -------- | -------- | -------- |
-| 定时任务 | 查看日志 | 跳转脚本 | 编辑     |
-| 环境变量 |          |          | 编辑     |
-| 脚本管理 | 查看内容 | 操作栏   | 操作栏   |
-| 依赖管理 | 查看日志 |          |          |
-| 任务日志 | 查看内容 |          |          |
+手动构建：
+```bash
+./gradlew assembleRelease
+```
 
-- 变量快捷导入将从输入文本中提取'**_export xx="xxxx"_**'格式内容作为一个变量,支持同时提取多个变量；
-- 本地导入搜索对应模块备份路径下的json文件，将外部文件复制到该模块路径下即可使用；
-- 任务备份路径：Android/data/auto.panel/files/tasks；
-- 变量备份路径：Android/data/auto.panel/files/environments；
-- 脚本备份路径：Android/data/auto.panel/files/scripts；
-- 运行日志路径：Android/data/auto.panel/files/logs；
+签名通过环境变量配置：`KEYSTORE_FILE`、`KEYSTORE_PASSWORD`、`KEY_ALIAS`、`KEY_PASSWORD`
 
-## 界面预览
+## 更新通道
 
-<img src="https://gitee.com/wsfsp4/public-static-file/raw/master/qinglong/p1.jpg" alt="登录页面" width="22%"> 
-<img src="https://gitee.com/wsfsp4/public-static-file/raw/master/qinglong/p2.jpg" alt="模块导航" width="22%">  
-<img src="https://gitee.com/wsfsp4/public-static-file/raw/master/qinglong/p3.jpg" alt="代码编辑" width="22%">  
-<img src="https://gitee.com/wsfsp4/public-static-file/raw/master/qinglong/p4.jpg" alt="系统设置" width="22%">
-
-## 下载地址
-
-[历史版本](https://gitee.com/wsfsp4/QingLong/releases)
+App 启动时自动检查本分支的 `version.json`，有新版本时应用内下载安装。
 
 ## 相关项目
 
-- [harmony-qinglong](https://appgallery.huawei.com/app/detail?id=com.hmos.auto.timer&channelId=SHARE&source=appshare) 鸿蒙端APP已上线，欢迎体验
-
-- [qinglong](https://github.com/whyour/qinglong)
+- [qinglong](https://github.com/whyour/qinglong) —— 青龙面板
 
 ## 交流反馈
 
-出现Bug或者有功能需求请创建Issue！
+有问题请提 Issue。

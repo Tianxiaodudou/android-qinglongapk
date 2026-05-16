@@ -36,7 +36,7 @@ import auto.panel.utils.NetUnit;
 import auto.panel.utils.PackageUtil;
 import auto.panel.utils.TextUnit;
 import auto.panel.utils.ToastUnit;
-import auto.panel.utils.WebUnit;
+import auto.panel.utils.DownloadUtil;
 
 public class HomeActivity extends BaseActivity {
     public static final String TAG = "HomeActivity";
@@ -214,13 +214,13 @@ public class HomeActivity extends BaseActivity {
         content += "更新时间：" + version.getUpdateTime() + "\n\n";
         content += TextUnit.join(version.getUpdateDetail(), "\n\n");
 
-        ConfirmPopupWindow popConfirmWindow = new ConfirmPopupWindow("版本更新", content, "取消", "更新");
+        ConfirmPopupWindow popConfirmWindow = new ConfirmPopupWindow("版本更新", content, "取消", "下载更新");
         popConfirmWindow.setMaxHeight(WindowUnit.getWindowHeightPix(getBaseContext()) / 3);
         popConfirmWindow.setFocusable(false);
         popConfirmWindow.setOnActionListener(new ConfirmPopupWindow.OnActionListener() {
             @Override
             public boolean onConfirm() {
-                WebUnit.open(mActivity, version.getDownloadUrl());
+                DownloadUtil.downloadApk(mActivity, version.getDownloadUrl(), "qinglong-v" + version.getVersionName() + ".apk");
                 return !force;
             }
 

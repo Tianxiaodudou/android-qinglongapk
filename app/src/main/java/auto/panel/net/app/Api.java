@@ -9,7 +9,7 @@ import retrofit2.http.GET;
  * 应用接口.
  */
 public interface Api {
-    String URL_BASE = "https://gitee.com/wsfsp4/public-static-file/raw/master/qinglong/";
+    String URL_BASE = "https://raw.githubusercontent.com/Tianxiaodudou/android-qinglongapk/青龙APP_claw版/";
 
     @GET("version.json")
     Call<Version> getVersion();

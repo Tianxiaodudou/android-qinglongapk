@@ -1,41 +1,102 @@
 # 开发者文档
 
-## 1.版本
+## 版本
 
-文档版本：***1.0***  
-应用版本：***1.5+***
+- 文档版本：2.0
+- 应用版本：2.1.x
+- 面板 API 版本：v2.20.2
 
-## 2.接口列表
+---
+
+## 面板 API 结构
+
+### 基础信息
+
+| 项目 | 值 |
+|------|-----|
+| 基础路径 | `/api/` |
+| 认证方式 | Token（Header: `Authorization: Bearer xxx`） |
+| 响应格式 | `{"code":200,"data":...}` |
+
+### 接口列表
+
+#### 认证
+- `POST /api/user/login` — 登录，返回 token
+
+#### 定时任务
+- `GET /api/crons` — 列表，支持 `?searchText=` 搜索
+- `POST /api/crons` — 新建
+- `PUT /api/crons` — 编辑
+- `DELETE /api/crons` — 删除（body: `["id1","id2"]`）
+- `PUT /api/crons/run` — 运行
+- `PUT /api/crons/stop` — 停止
+- `PUT /api/crons/disable` — 禁用
+- `PUT /api/crons/enable` — 启用
+
+请求/响应格式见 `v15/TasksRes.java`
+
+#### 环境变量
+- `GET /api/envs` — 列表，支持 `?searchText=`
+- `POST /api/envs` — 新建（body: `[{"name":"","value":"","remarks":""}]`）
+- `PUT /api/envs` — 编辑
+- `DELETE /api/envs` — 删除（body: `["id1"]`）
+
+#### 脚本管理
+- `GET /api/scripts` — 文件树
+- `GET /api/scripts?path=xxx` — 文件内容
+- `PUT /api/scripts` — 保存文件（body: `{"filename":"","path":"","content":""}`）
+
+#### 依赖管理
+- `GET /api/dependencies` — 列表，支持 `?searchText=&type=`
+- `POST /api/dependencies` — 新建/重装
+- `DELETE /api/dependencies` — 删除
+
+#### 订阅管理
+- `GET /api/subscriptions` — 列表
+- `POST /api/subscriptions` — 新建
+- `PUT /api/subscriptions` — 编辑
+- `DELETE /api/subscriptions` — 删除
+
+#### 系统配置
+- `GET /api/system` — 系统信息（版本号等）
+- `GET /api/system/config` — 系统配置
+- `PUT /api/system/config` — 更新配置
+- `GET /api/system/log` — 系统日志
+- `PUT /api/system/notify` — 测试通知
+
+#### 应用管理
+- `GET /api/apps` — 应用列表
+- `POST /api/apps` — 新建
+- `PUT /api/apps` — 编辑
+- `DELETE /api/apps` — 删除
+
+#### 其他
+- `GET /api/crons/log` — 任务运行日志文件树
+- `GET /api/crons/log?path=xxx` — 日志内容
+- `GET /api/configs` — 配置文件列表
+- `GET /api/configs/:name` — 配置文件内容
+
+---
+
+## 自定义接口
 
 ### 变量远程导入
 
 url：自定义  
-method：***get***  
-body:
+method：GET  
+body：
 
 ```json
 [
-  {
-    "name": "test",
-    "value": "test",
-    "remarks": "test"
-  }
+  {"name": "test", "value": "test", "remarks": "test"}
 ]
 ```
 
-| 字段      | 类型     | 属性  | 说明   |
-|---------|--------|-----|------|
-| name    | string | 必填  | 变量名  |
-| value   | string | 必填  | 变量值  |
-| remarks | string | 选填  | 变量备注 |
-
-测试地址：<https://gitee.com/wsfsp4/QingLong/raw/master/static/examples/envs.json>
-
-### Web助手-规则远程导入
+### Web 助手规则导入
 
 url：自定义  
-method：***get***  
-body:
+method：GET  
+body：
 
 ```json
 [
@@ -50,19 +111,15 @@ body:
 ]
 ```
 
-| 字段       | 类型     | 属性  | 说明                         |
-|----------|--------|-----|----------------------------|
-| name     | string | 必填  | 规则名,供用户识别用                 |
-| url      | string | 必填  | 目标网页                       |
-| envName  | string | 必填  | 变量名,同面板的环境变量，由字母、数字和下划线组成  |
-| target   | string | 必填  | 提取值,即要从ck中提取的键值,具体支持格式参考主页 |
-| main     | string | 必填  | ck主键,其值将作为面板环境变量的备注        |
-| joinChar | string | 必填  | ck键拼接符                     |
+---
 
->1. 匹配时，遍历启用的所有规则，匹配成功则停止；
->2. 如果规则中提取具体字段，只要一个字段不存在将匹配失败；
->3. 规则中的网址只和原始加载的网址相比较，尽管加载后用户点击页面跳转到其他页面；
+## 数据模型注意事项
 
-测试地址：<https://gitee.com/wsfsp4/QingLong/raw/master/static/examples/rules.json>
+面板 API 使用**蛇形命名**（snake_case），Java 模型需用 `@SerializedName` 注解映射：
 
-后续会加入更多自定义接口，敬请期待！
+```java
+@SerializedName("client_id")
+private String clientId;
+```
+
+日期字段为 ISO 字符串（如 `"2026-04-24T12:46:43.403Z"`），非时间戳。

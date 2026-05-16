@@ -1,0 +1,18 @@
+{
+  "versionCode": 19,
+  "versionName": "2.1.19",
+  "updateTime": "2026-05-16",
+  "minVersionCode": 1,
+  "minPanelVersion": "2.0.0",
+  "downloadUrl": "https://github.com/Tianxiaodudou/android-qinglongapk/releases/download/v19/app-release-v19.apk",
+  "updateDetail": [
+    "修复应用设置 panel_fragment_setting_open_apps.xml 缺少 xmlns:app 导致编译失败",
+    "修复 settings.gradle 仓库优先级",
+    "修复 panel_item_open_app.xml 颜色资源不存在",
+    "添加 APK 签名配置和 GitHub Actions 构建",
+    "修复应用设置数据不显示（AppsRes 模型 Gson 映射）",
+    "修复通知设置不加载现有配置",
+    "添加日志导出功能",
+    "根据面板 API 实际返回格式修复 client_id/client_secret 映射和 createdAt 类型"
+  ]
+}

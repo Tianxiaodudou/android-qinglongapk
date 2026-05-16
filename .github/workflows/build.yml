@@ -1,13 +1,15 @@
-name: Build APK
+name: 构建 APK
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, master, 青龙APP_claw版 ]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
     - name: 检出代码
@@ -41,8 +43,52 @@ jobs:
     - name: 构建 Release APK
       run: ./gradlew assembleRelease
 
+    - name: 获取 APK 文件名
+      id: apk
+      run: |
+        APK=$(ls app/build/outputs/apk/release/*.apk | head -1)
+        APK_NAME=$(basename "$APK")
+        echo "path=$APK" >> $GITHUB_OUTPUT
+        echo "name=$APK_NAME" >> $GITHUB_OUTPUT
+
     - name: 上传 APK 产物
       uses: actions/upload-artifact@v4
       with:
         name: app-release-v${{ github.run_number }}
         path: app/build/outputs/apk/release/*.apk
+
+    - name: 更新 version.json
+      run: |
+        cat > version.json << EOF
+        {
+          "versionCode": $GITHUB_RUN_NUMBER,
+          "versionName": "2.1.$GITHUB_RUN_NUMBER",
+          "updateTime": "$(date +%Y-%m-%d)",
+          "minVersionCode": 1,
+          "minPanelVersion": "2.0.0",
+          "downloadUrl": "https://github.com/Tianxiaodudou/android-qinglongapk/releases/download/v$GITHUB_RUN_NUMBER/${{ steps.apk.outputs.name }}",
+          "updateDetail": [
+            "查看 GitHub Release 说明"
+          ]
+        }
+        EOF
+
+    - name: 推送 version.json
+      run: |
+        git config user.name "github-actions"
+        git config user.email "actions@github.com"
+        git add version.json app/build.gradle
+        git diff --cached --quiet || git commit -m "chore: 更新版本号到 2.1.$GITHUB_RUN_NUMBER"
+        git push
+
+    - name: 创建 GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: v${{ github.run_number }}
+        name: v${{ github.run_number }} (2.1.${{ github.run_number }})
+        files: ${{ steps.apk.outputs.path }}
+        body: |
+          版本号: 2.1.${{ github.run_number }}
+          构建时间: $(date +%Y-%m-%d)
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
