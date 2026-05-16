@@ -145,9 +145,10 @@ public class PanelSettingFragment extends BaseFragment {
         // 面板连接状态
         sb.append("--- 面板连接 ---\n");
         try {
-            auto.panel.database.sp.PanelPreference pref = auto.panel.database.sp.PanelPreference.getInstance();
-            sb.append("面板地址: ").append(pref.getBaseUrl()).append("\n");
-            sb.append("Token: ").append(pref.getAuthorization() != null && !pref.getAuthorization().isEmpty() ? "已设置" : "未设置").append("\n");
+            String baseUrl = auto.panel.database.sp.PanelPreference.getBaseUrl();
+            String auth = auto.panel.database.sp.PanelPreference.getAuthorization();
+            sb.append("面板地址: ").append(baseUrl).append("\n");
+            sb.append("Token: ").append(auth != null && !auth.isEmpty() ? "已设置" : "未设置").append("\n");
         } catch (Exception e) {
             sb.append("(无法获取面板信息)\n");
         }
