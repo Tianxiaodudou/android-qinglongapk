@@ -5,14 +5,24 @@ import auto.panel.net.panel.BaseRes;
 import java.util.List;
 
 public class AppsRes extends BaseRes {
-    private List<AppObject> data;
+    private AppsData data;
 
-    public List<AppObject> getData() {
+    public AppsData getData() {
         return data;
     }
 
-    public void setData(List<AppObject> data) {
+    public void setData(AppsData data) {
         this.data = data;
+    }
+
+    public static class AppsData {
+        private List<AppObject> apps;
+        private int total;
+
+        public List<AppObject> getApps() { return apps; }
+        public void setApps(List<AppObject> apps) { this.apps = apps; }
+        public int getTotal() { return total; }
+        public void setTotal(int total) { this.total = total; }
     }
 
     public static class AppObject {

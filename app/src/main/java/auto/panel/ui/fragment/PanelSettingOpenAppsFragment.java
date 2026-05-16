@@ -25,6 +25,7 @@ import auto.panel.net.panel.BaseRes;
 import auto.panel.net.panel.v15.Api;
 import auto.panel.net.panel.v15.AppsRes;
 import auto.panel.ui.adapter.PanelOpenAppsAdapter;
+import auto.panel.utils.CrashLogUtil;
 import auto.panel.utils.TextUnit;
 import auto.panel.utils.ToastUnit;
 import okhttp3.MediaType;
@@ -96,14 +97,20 @@ public class PanelSettingOpenAppsFragment extends BaseFragment {
             @Override
             public void onResponse(Call<AppsRes> call, Response<AppsRes> response) {
                 if (response.code() != 200 || response.body() == null || response.body().getCode() != 200) {
+                    String errMsg = "加载应用列表失败: code=" + response.code();
+                    if (response.body() != null) {
+                        errMsg += " bodyCode=" + response.body().getCode()
+                                + " msg=" + response.body().getMessage();
+                    }
+                    CrashLogUtil.log("OpenApps", errMsg);
                     ToastUnit.showShort("加载失败: " + (response.body() != null ? response.body().getMessage() : "响应异常"));
                     finishRefresh(false);
                     return;
                 }
                 List<PanelOpenApp> apps = new ArrayList<>();
                 AppsRes res = response.body();
-                if (res.getData() != null) {
-                    for (AppsRes.AppObject obj : res.getData()) {
+                if (res.getData() != null && res.getData().getApps() != null) {
+                    for (AppsRes.AppObject obj : res.getData().getApps()) {
                         PanelOpenApp app = new PanelOpenApp();
                         app.setId(obj.getId());
                         app.setName(obj.getName());
@@ -123,6 +130,8 @@ public class PanelSettingOpenAppsFragment extends BaseFragment {
 
             @Override
             public void onFailure(Call<AppsRes> call, Throwable t) {
+                CrashLogUtil.log("OpenApps", "网络请求失败: " + t.toString());
+                CrashLogUtil.log("OpenApps", t);
                 ToastUnit.showShort("网络错误: " + t.getLocalizedMessage());
                 finishRefresh(false);
             }

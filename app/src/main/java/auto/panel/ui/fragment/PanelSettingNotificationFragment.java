@@ -26,6 +26,7 @@ import auto.panel.net.RetrofitFactory;
 import auto.panel.net.panel.BaseRes;
 import auto.panel.net.panel.v15.Api;
 import auto.panel.net.panel.v15.SystemConfigRes;
+import auto.panel.utils.CrashLogUtil;
 import auto.panel.utils.TextUnit;
 import auto.panel.utils.ToastUnit;
 import okhttp3.MediaType;
@@ -105,6 +106,7 @@ public class PanelSettingNotificationFragment extends BaseFragment {
             @Override
             public void onResponse(Call<SystemConfigRes> call, Response<SystemConfigRes> response) {
                 if (response.code() != 200 || response.body() == null || response.body().getCode() != 200) {
+                    CrashLogUtil.log("Notify", "加载系统配置失败: code=" + response.code());
                     return;
                 }
                 SystemConfigRes res = response.body();
@@ -118,6 +120,7 @@ public class PanelSettingNotificationFragment extends BaseFragment {
 
             @Override
             public void onFailure(Call<SystemConfigRes> call, Throwable t) {
+                CrashLogUtil.log("Notify", "加载系统配置网络错误: " + t.toString());
             }
         });
     }
@@ -273,6 +276,7 @@ public class PanelSettingNotificationFragment extends BaseFragment {
 
             @Override
             public void onFailure(Call<BaseRes> call, Throwable t) {
+                CrashLogUtil.log("Notify", "保存通知设置失败: " + t.toString());
                 ToastUnit.showShort("保存失败: " + t.getLocalizedMessage());
             }
         });
@@ -306,6 +310,7 @@ public class PanelSettingNotificationFragment extends BaseFragment {
 
             @Override
             public void onFailure(Call<BaseRes> call, Throwable t) {
+                CrashLogUtil.log("Notify", "测试通知发送失败: " + t.toString());
                 ToastUnit.showShort("通知发送失败: " + t.getLocalizedMessage());
             }
         });
