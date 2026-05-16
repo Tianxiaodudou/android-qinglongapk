@@ -1,13 +1,11 @@
 {
-  "versionCode": 27,
-  "versionName": "2.1.27",
+  "versionCode": 31,
+  "versionName": "2.1.31",
   "updateTime": "2026-05-16",
   "minVersionCode": 1,
   "minPanelVersion": "2.0.0",
-  "downloadUrl": "https://github.com/Tianxiaodudou/android-qinglongapk/releases/download/v27/app-release.apk",
+  "downloadUrl": "https://github.com/Tianxiaodudou/android-qinglongapk/releases/download/v31/app-release.apk",
   "updateDetail": [
-    "重写更新通道：应用内下载安装，不再跳转浏览器",
-    "新增全项目中英文文档",
-    "修复编译错误"
+    "查看 GitHub Release 说明"
   ]
 }
