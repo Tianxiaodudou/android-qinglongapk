@@ -48,7 +48,7 @@
             android:paddingHorizontal="12dp"
             android:paddingVertical="4dp"
             android:text="重置密钥"
-            android:textColor="@color/text_color_99"
+            android:textColor="@color/text_color_80"
             android:textSize="13sp" />
 
         <TextView
