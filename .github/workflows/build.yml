@@ -78,10 +78,8 @@ jobs:
         git config user.name "github-actions"
         git config user.email "actions@github.com"
         git add version.json app/build.gradle
-        git stash
+        git commit -m "chore: 更新版本号到 2.1.$GITHUB_RUN_NUMBER"
         git pull --rebase origin ${{ github.ref_name }}
-        git stash pop
-        git diff --cached --quiet || git commit -m "chore: 更新版本号到 2.1.$GITHUB_RUN_NUMBER"
         git push
 
     - name: 创建 GitHub Release
