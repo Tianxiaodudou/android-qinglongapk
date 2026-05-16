@@ -29,7 +29,6 @@ public class DownloadUtil {
         request.setDescription("青龙 APP 新版本下载中...");
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
-        request.setAllowedNetworkTypes(DownloadManager.NETWORK_WIFI | DownloadManager.NETWORK_MOBILE);
         request.setMimeType("application/vnd.android.package-archive");
 
         dm = (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
