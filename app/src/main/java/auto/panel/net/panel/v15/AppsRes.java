@@ -1,43 +1,45 @@
 package auto.panel.net.panel.v15;
 
+import com.google.gson.annotations.SerializedName;
+
 import auto.panel.net.panel.BaseRes;
 
 import java.util.List;
 
 public class AppsRes extends BaseRes {
-    private AppsData data;
+    private List<AppObject> data;
 
-    public AppsData getData() {
+    public List<AppObject> getData() {
         return data;
     }
 
-    public void setData(AppsData data) {
+    public void setData(List<AppObject> data) {
         this.data = data;
-    }
-
-    public static class AppsData {
-        private List<AppObject> apps;
-        private int total;
-
-        public List<AppObject> getApps() { return apps; }
-        public void setApps(List<AppObject> apps) { this.apps = apps; }
-        public int getTotal() { return total; }
-        public void setTotal(int total) { this.total = total; }
     }
 
     public static class AppObject {
         private int id;
         private String name;
+
+        @SerializedName("client_id")
         private String clientId;
+
+        @SerializedName("client_secret")
         private String clientSecret;
+
         private List<String> scopes;
-        private long createdAt;
+        private List<Object> tokens;
+
+        private String createdAt;
+        private String updatedAt;
 
         public int getId() { return id; }
         public String getName() { return name; }
         public String getClientId() { return clientId; }
         public String getClientSecret() { return clientSecret; }
         public List<String> getScopes() { return scopes; }
-        public long getCreatedAt() { return createdAt; }
+        public List<Object> getTokens() { return tokens; }
+        public String getCreatedAt() { return createdAt; }
+        public String getUpdatedAt() { return updatedAt; }
     }
 }

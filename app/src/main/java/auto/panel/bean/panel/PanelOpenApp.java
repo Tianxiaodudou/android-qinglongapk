@@ -6,7 +6,7 @@ public class PanelOpenApp {
     private String clientId;
     private String clientSecret;
     private String scopes;
-    private long createdAt;
+    private String createdAt;
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
@@ -18,6 +18,6 @@ public class PanelOpenApp {
     public void setClientSecret(String clientSecret) { this.clientSecret = clientSecret; }
     public String getScopes() { return scopes; }
     public void setScopes(String scopes) { this.scopes = scopes; }
-    public long getCreatedAt() { return createdAt; }
-    public void setCreatedAt(long createdAt) { this.createdAt = createdAt; }
+    public String getCreatedAt() { return createdAt; }
+    public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
 }

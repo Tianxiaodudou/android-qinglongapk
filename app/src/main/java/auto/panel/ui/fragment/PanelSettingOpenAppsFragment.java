@@ -109,8 +109,8 @@ public class PanelSettingOpenAppsFragment extends BaseFragment {
                 }
                 List<PanelOpenApp> apps = new ArrayList<>();
                 AppsRes res = response.body();
-                if (res.getData() != null && res.getData().getApps() != null) {
-                    for (AppsRes.AppObject obj : res.getData().getApps()) {
+                if (res.getData() != null) {
+                    for (AppsRes.AppObject obj : res.getData()) {
                         PanelOpenApp app = new PanelOpenApp();
                         app.setId(obj.getId());
                         app.setName(obj.getName());
