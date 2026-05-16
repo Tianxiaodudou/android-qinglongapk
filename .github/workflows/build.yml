@@ -59,7 +59,6 @@ jobs:
         path: app/build/outputs/apk/release/*.apk
 
     - name: 上传签名密钥（仅首次生成时）
-      if: ${{ !secrets.KEYSTORE_BASE64 }}
       uses: actions/upload-artifact@v4
       with:
         name: keystore-backup
